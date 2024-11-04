@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation with Cookies</title>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <h1>Contact Form</h1>
+    <form id="contactForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+        <br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+        <br>
+        <label for="message">Message:</label>
+        <textarea id="message" required></textarea>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('contactForm');
+
+    // Load existing cookies if available
+    loadCookies();
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent form submission
+
+        // Validate the form
+        if (validateForm()) {
+            // If valid, store the values in cookies
+            setCookies();
+            alert('Form submitted successfully!');
+            // Optionally, clear the form
+            form.reset();
+        } else {
+            alert('Please fill out all fields correctly.');
+        }
+    });
+
+    function validateForm() {
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const message = document.getElementById('message').value.trim();
+
+        return name && email && message; // Simple validation
+    }
+
+    function setCookies() {
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const message = document.getElementById('message').value;
+
+        // Set each field as a cookie with a 1-hour expiration
+        document.cookie = `name=${encodeURIComponent(name)}; path=/; max-age=3600`; 
+        document.cookie = `email=${encodeURIComponent(email)}; path=/; max-age=3600`;
+        document.cookie = `message=${encodeURIComponent(message)}; path=/; max-age=3600`;
+
+        console.log("Cookies set:", document.cookie); // Log cookies to verify they were set
+    }
+
+    function loadCookies() {
+        const cookies = document.cookie.split('; ');
+        cookies.forEach(cookie => {
+            const [key, value] = cookie.split('=');
+            if (key === 'name') {
+                document.getElementById('name').value = decodeURIComponent(value);
+            } else if (key === 'email') {
+                document.getElementById('email').value = decodeURIComponent(value);
+            } else if (key === 'message') {
+                document.getElementById('message').value = decodeURIComponent(value);
+            }
+        });
+    }
+});
